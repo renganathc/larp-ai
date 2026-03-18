@@ -1,4 +1,4 @@
-from main import mcp
+from mcp_instance import mcp
 
 def log(action):
     print(f"[HEAD] {action}")
