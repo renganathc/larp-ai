@@ -1,13 +1,17 @@
-from mcp_instance import mcp
+from instances import mcp, picam2
+import cv2
 import requests
 
-CV_SERVER_URL = "my ip"
+CV_SERVER_URL = "http://localhost:5000/detect"
 
 
 def capture_image():
-    print("Capturing image...")
+    print("[CAMERA] Capturing image")
 
-    return b"fake_image_data"
+    frame = picam2.capture_array()
+    
+    _, buffer = cv2.imencode(".jpg", frame)
+    return buffer.tobytes()
 
 
 def send_to_cv(image_bytes):
@@ -15,17 +19,17 @@ def send_to_cv(image_bytes):
 
     try:
         files = {
-            "image": ("frame.jpg", image_bytes, "image/jpeg")
+            "file": ("frame.jpg", image_bytes, "image/jpeg")
         }
 
-        response = requests.post(CV_SERVER_URL, files=files)
+        response = requests.post(CV_SERVER_URL, files=files, timeout=7)
         response.raise_for_status()
 
         return response.json()
 
     except Exception as e:
         print("Error :", str(e))
-        return {"objects": []}
+        return {"objects": [], "count": 0}
 
 
 @mcp.tool()
