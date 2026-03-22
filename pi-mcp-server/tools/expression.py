@@ -1,4 +1,4 @@
-from mcp_instance import mcp
+from instances import mcp
 
 def log(expression):
     print(f"[EYES] {expression}")

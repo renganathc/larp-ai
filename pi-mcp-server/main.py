@@ -1,5 +1,5 @@
 from fastmcp import FastMCP
-from mcp_instance import mcp
+from instances import mcp
 
 import tools.movement
 import tools.head

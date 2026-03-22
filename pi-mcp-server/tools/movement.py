@@ -1,4 +1,4 @@
-from mcp_instance import mcp
+from instances import mcp
 from hardware import motors
 
 

@@ -1,4 +1,4 @@
-from mcp_instance import mcp
+from instances import mcp
 import hardware.servos as servos
 
 
