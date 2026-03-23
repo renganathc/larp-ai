@@ -1,14 +1,46 @@
-"""
-RoboEyes Python Demo
-Demonstrates the RoboEyes Python implementation
-"""
-
 import pygame
 import sys
 import time
 from robo_eyes import RoboEyes
 from utils.moods_utils import DEFAULT, TIRED, SAD, EXCITED, ANGRY
 from utils.shapes_utils import N, NE, E, SE, S, SW, W, NW
+
+def create_eyes():
+    # Create RoboEyes instance
+    eyes = RoboEyes()
+    
+    # Initialize with screen dimensions and frame rate
+    screen_width = 640
+    screen_height = 320
+    max_fps = 60
+    
+    if not eyes.begin(screen_width, screen_height, max_fps):
+        print("Failed to initialize RoboEyes")
+        return
+    
+    # Configure eye properties
+    eyes.set_width(80, 80)
+    eyes.set_height(80, 80)
+    eyes.set_border_radius(20, 20)
+    eyes.set_space_between(20)
+    
+    # Store default values for reset
+    eyes.eye_l_width_default = 80
+    eyes.eye_r_width_default = 80
+    eyes.eye_l_height_default = 80
+    eyes.eye_r_height_default = 80
+    
+    # Set default mood
+    eyes.set_mood(DEFAULT)
+    
+    # Set curiosity effect
+    eyes.set_curiosity(True)
+    
+    # Set initial eye shape
+    eyes.set_eye_shape("pill")
+
+    return eyes
+
 
 def main():
     # Create RoboEyes instance
@@ -118,6 +150,8 @@ def main():
             
             # Update the eyes
             eyes.update()
+
+            return eyes
     
     except KeyboardInterrupt:
         print("Exiting...")
