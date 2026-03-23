@@ -1,14 +1,21 @@
 from fastapi import FastAPI, UploadFile, File
 import numpy as np
 import cv2
+from ultralytics import YOLO
+import torch
 
 app = FastAPI()
 
-def fake_detect(image):
-    return [
-        {"label": "bottle", "x": 120, "y": 200},
-        {"label": "person", "x": 300, "y": 180}
-    ]
+if torch.cuda.is_available():
+    DEVICE = "cuda"
+elif torch.backends.mps.is_available():
+    DEVICE = "mps"
+else:
+    DEVICE = "cpu"
+
+print(f"[INFO] Using device: {DEVICE}")
+
+model = YOLO("yolov8x.pt")
 
 @app.post("/detect")
 async def detect(file: UploadFile = File(...)):
@@ -20,7 +27,28 @@ async def detect(file: UploadFile = File(...)):
     if image is None:
         return {"error": "invalid image"}
 
-    detections = fake_detect(image)
+    results = model(image, device=DEVICE)
+
+    detections = []
+
+    for r in results:
+        boxes = r.boxes
+        for box in boxes:
+            cls_id = int(box.cls[0])
+            label = model.names[cls_id]
+            conf = float(box.conf[0])
+            x1, y1, x2, y2 = map(int, box.xyxy[0])
+
+            detections.append({
+                "label": label,
+                "confidence": conf,
+                "bbox": {
+                    "x1": x1,
+                    "y1": y1,
+                    "x2": x2,
+                    "y2": y2
+                }
+            })
 
     return {
         "objects": detections,
