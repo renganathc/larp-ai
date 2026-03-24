@@ -3,6 +3,9 @@ import numpy as np
 import cv2
 from ultralytics import YOLO
 import torch
+import threading
+import uuid
+import time
 
 app = FastAPI()
 
@@ -16,6 +19,42 @@ else:
 print(f"[INFO] Using device: {DEVICE}")
 
 model = YOLO("yolov8x.pt")
+
+def show_detections(image, detections):
+
+    window_name = f"Detections_{uuid.uuid4().hex[:8]}"
+
+    for obj in detections:
+        label = obj["label"]
+        conf = obj["confidence"]
+        bbox = obj["bbox"]
+
+        x1, y1 = bbox["x1"], bbox["y1"]
+        x2, y2 = bbox["x2"], bbox["y2"]
+
+        cv2.rectangle(image, (x1, y1), (x2, y2), (0, 255, 0), 2)
+
+        text = f"{label} {conf:.2f}"
+        y_text = max(y1 - 10, 10)
+
+        cv2.putText(
+            image,
+            text,
+            (x1, y_text),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.5,
+            (0, 255, 0),
+            2
+        )
+
+    cv2.imshow(window_name, image)
+    cv2.waitKey(1)
+
+    def close_window():
+        time.sleep(10)
+        cv2.destroyWindow(window_name)
+
+    threading.Thread(target=close_window, daemon=True).start()
 
 @app.post("/detect")
 async def detect(file: UploadFile = File(...)):
@@ -49,6 +88,8 @@ async def detect(file: UploadFile = File(...)):
                     "y2": y2
                 }
             })
+
+    show_detections(image, detections)
 
     return {
         "objects": detections,
