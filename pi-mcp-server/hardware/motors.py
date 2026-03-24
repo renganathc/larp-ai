@@ -1,13 +1,12 @@
 import serial
 
-SERIAL_PORT = "/dev/ttyUSB0"
+SERIAL_PORT = "/dev/ttyACM0"
 BAUD_RATE = 115200
 
 ser = serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=1)
 
 
 def send_command(cmd: str):
-    print(f"[MOTOR UART] Sending: {cmd}")
     ser.write((cmd + "\n").encode())
 
 

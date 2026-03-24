@@ -1,12 +1,16 @@
-import threading
+import os
+os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "1"
+
 import pygame
+import sys
 from anim_eyes.main import create_eyes
 
-eyes = None
+def run():
+    eyes = create_eyes()
 
-
-def _run_loop():
-    global eyes
+    # expose globally for tools
+    import hardware.shared
+    hardware.shared.eyes = eyes
 
     try:
         while eyes.is_running():
@@ -18,17 +22,3 @@ def _run_loop():
 
     finally:
         eyes.quit()
-
-
-def start():
-    global eyes
-
-    if eyes is not None:
-        return eyes  # already started
-
-    eyes = create_eyes()
-
-    thread = threading.Thread(target=_run_loop, daemon=True)
-    thread.start()
-
-    return eyes
