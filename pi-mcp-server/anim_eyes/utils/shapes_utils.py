@@ -24,7 +24,7 @@ class ShapesHandler:
         self.parent = parent
         self.eye_shape = "square"  # Default eye shape
         # Define valid shapes
-        self.valid_shapes = ["round", "square", "pill", "oval", "angry", "sad"]
+        self.valid_shapes = ["round", "square", "cute", "oval", "angry", "sad"]
 
     def set_eye_shape(self, shape):
         """Set the shape of the eyes"""
@@ -184,14 +184,18 @@ class ShapesHandler:
             # Right eye rounded rect
             pygame.draw.rect(screen, eye_color, (eye_r_x, eye_r_y, eye_r_width, eye_r_height), border_radius=corner_radius_r)
 
-        elif self.eye_shape == "pill":
-            # Draw pill-shaped eyes (capsule shape)
-            # Rounded rectangle with radius = half of the height (for horizontal pills)
-            # Ensure height > 0 to avoid negative radius
-            radius_l = max(1, eye_l_height // 2)
-            radius_r = max(1, eye_r_height // 2)
-            pygame.draw.rect(screen, eye_color, (eye_l_x, eye_l_y, eye_l_width, eye_l_height), border_radius=radius_l)
-            pygame.draw.rect(screen, eye_color, (eye_r_x, eye_r_y, eye_r_width, eye_r_height), border_radius=radius_r)
+        elif self.eye_shape == "cute":
+            # Draw cute-shaped eyes with inward curves on bottom
+            self._draw_cute(
+                screen,
+                eye_color,
+                eye_l_x, eye_l_y, eye_l_width, eye_l_height
+            )
+            self._draw_cute(
+                screen,
+                eye_color,
+                eye_r_x, eye_r_y, eye_r_width, eye_r_height
+            )
 
         elif self.eye_shape == "angry":
             # Draw angry-shaped eyes (angled eyes from image)
@@ -350,3 +354,62 @@ class ShapesHandler:
         # 3. Apply cut
         if angle_width > 0 and angle_height > 0 and width > 0 and height > 0:
             pygame.draw.polygon(screen, bg_color, cut_points)
+
+    def _draw_cute(self, screen, color, x, y, width, height):
+        """Draw cute eyes - rounded square with inward curved bottom (stable)"""
+
+        # ---- Prevent degenerate blink states ----
+        if height < 4:
+            pygame.draw.rect(screen, color, (x, y, width, 2))
+            return
+
+        # ---- Stable corner radius ----
+        corner_radius = min(width, height) // 3
+        corner_radius = min(corner_radius, width // 2, height // 2)
+        corner_radius = max(1, corner_radius)
+
+        # ---- Stable curve depth ----
+        curve_depth = int(height * 0.16)
+        curve_depth = min(max(1, curve_depth), height // 2)
+
+        # ---- Prevent ultra-thin geometry glitches ----
+        if height <= curve_depth + 2:
+            pygame.draw.rect(screen, color, (x, y, width, 2))
+            return
+
+        points = []
+
+        # ---- Top-left rounded corner ----
+        arc_segments = max(4, corner_radius // 2)
+
+        for segment in range(arc_segments + 1):
+            angle = (segment / arc_segments) * (math.pi / 2)
+            px = x + corner_radius - corner_radius * math.cos(angle)
+            py = y + corner_radius - corner_radius * math.sin(angle)
+            points.append((int(px), int(py)))
+
+        # ---- Top-right rounded corner ----
+        for segment in range(arc_segments + 1):
+            angle = (segment / arc_segments) * (math.pi / 2)
+            px = x + width - corner_radius + corner_radius * math.sin(angle)
+            py = y + corner_radius - corner_radius * math.cos(angle)
+            points.append((int(px), int(py)))
+
+        # ---- Bottom alignment (IMPORTANT FIX) ----
+        bottom_y = int(y + height - curve_depth)
+
+        # ---- Bottom inward curve (clean parabola) ----
+        num_segments = max(10, width // 10)
+
+        for segment in range(num_segments + 1):
+            t = segment / num_segments
+            px = x + width - (t * width)
+
+            inward_amount = 6 * t * (1 - t)
+            py = int(y + height - curve_depth * (1 + inward_amount))
+
+            points.append((int(px), py))
+
+        # ---- Draw shape ----
+        if len(points) > 2:
+            pygame.draw.polygon(screen, color, points)

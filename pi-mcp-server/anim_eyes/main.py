@@ -1,9 +1,9 @@
 import pygame
 import sys
 import time
-from robo_eyes import RoboEyes
-from utils.moods_utils import DEFAULT, TIRED, SAD, EXCITED, ANGRY
-from utils.shapes_utils import N, NE, E, SE, S, SW, W, NW
+from anim_eyes.robo_eyes import RoboEyes
+from anim_eyes.utils.moods_utils import DEFAULT, TIRED, SAD, CUTE, ANGRY
+from anim_eyes.utils.shapes_utils import N, NE, E, SE, S, SW, W, NW
 
 def create_eyes():
     # Create RoboEyes instance
@@ -37,7 +37,7 @@ def create_eyes():
     eyes.set_curiosity(True)
     
     # Set initial eye shape
-    eyes.set_eye_shape("pill")
+    eyes.set_eye_shape("square")
 
     return eyes
 
@@ -56,16 +56,16 @@ def main():
         return
     
     # Configure eye properties
-    eyes.set_width(80, 80)
-    eyes.set_height(80, 80)
-    eyes.set_border_radius(20, 20)
-    eyes.set_space_between(20)
+    eyes.set_width(200, 200)
+    eyes.set_height(200, 200)
+    eyes.set_border_radius(50, 50)
+    eyes.set_space_between(50)
     
     # Store default values for reset
-    eyes.eye_l_width_default = 80
-    eyes.eye_r_width_default = 80
-    eyes.eye_l_height_default = 80
-    eyes.eye_r_height_default = 80
+    eyes.eye_l_width_default = 200
+    eyes.eye_r_width_default = 200
+    eyes.eye_l_height_default = 200
+    eyes.eye_r_height_default = 200
     
     # Set default mood
     eyes.set_mood(DEFAULT)
@@ -74,7 +74,7 @@ def main():
     eyes.set_curiosity(True)
     
     # Set initial eye shape
-    eyes.set_eye_shape("pill")
+    eyes.set_eye_shape("square")
     
     # Main loop
     try:
@@ -84,11 +84,10 @@ def main():
         print("--------------------")
         print("Press ESC or close the window to exit")
         print("Press 1-4 to change mood:")
-        print("  1: DEFAULT, 2: TIRED, 3: SAD, 4: EXCITED")
+        print("  1: DEFAULT, 2: TIRED, 3: SAD, 4: CUTE")
         print("Press B to blink")
         print("Press L to laugh")
         print("Press F to look confused")
-        print("Press E to look excited")
         print("Use ARROW KEYS to move eyes (auto-centers after 5 seconds of inactivity)")
         print("Press W to wink left eye")
         print("Press Q to wink right eye")
@@ -115,8 +114,8 @@ def main():
                         eyes.set_mood(ANGRY)
                         print("Mood: ANGRY")
                     elif event.key == pygame.K_4:
-                        eyes.set_mood(EXCITED)
-                        print("Mood: EXCITED")
+                        eyes.set_mood(CUTE)
+                        print("Mood: cute")
                     elif event.key == pygame.K_5:
                         eyes.set_mood(SAD)
                         print("Mood: SAD")
@@ -129,9 +128,6 @@ def main():
                     elif event.key == pygame.K_f:
                         eyes.anim_confused()
                         print("Confused")
-                    elif event.key == pygame.K_e:
-                        eyes.anim_excited()
-                        print("Excited")
                     elif event.key == pygame.K_w:
                         eyes.wink(left_eye=True)
                         print("Winking left eye")
@@ -150,8 +146,6 @@ def main():
             
             # Update the eyes
             eyes.update()
-
-            return eyes
     
     except KeyboardInterrupt:
         print("Exiting...")

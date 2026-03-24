@@ -10,7 +10,7 @@ import pygame
 DEFAULT = 0
 TIRED = 1
 ANGRY = 2
-EXCITED = 3
+CUTE = 3
 SAD = 4
 
 class MoodsHandler:
@@ -46,19 +46,19 @@ class MoodsHandler:
                 self.parent.eye_l_height_default, 
                 self.parent.eye_r_height_default
             )
-        elif mood == EXCITED:
-            self.parent.shapes.set_eye_shape("pill")
-            # Make eyes wider for excited look
+        elif mood == CUTE:
+            self.parent.shapes.set_eye_shape("cute")
+            # Make eyes wider for CUTE look
             self.parent.shapes.set_width(
-                int(self.parent.eye_l_width_default * 1.3), 
-                int(self.parent.eye_r_width_default * 1.3)
+                int(self.parent.eye_l_width_default * 0.95), 
+                int(self.parent.eye_r_width_default * 0.95)
             )
             self.parent.shapes.set_height(
                 int(self.parent.eye_l_height_default * 0.8), 
                 int(self.parent.eye_r_height_default * 0.8)
             )
             # Add asymmetry for more character
-            self.parent.eye_r_width = int(self.parent.eye_r_width * 0.9)  # Right eye slightly narrower
+            self.parent.eye_r_width = int(self.parent.eye_r_width * 0.95)  # Right eye slightly narrower
         elif mood == SAD:
             # Angry shape for SAD mood as shown in the image
             self.parent.shapes.set_eye_shape("sad")
@@ -76,7 +76,7 @@ class MoodsHandler:
             self.parent.shapes.set_eye_shape("square")
             self.parent.shapes.set_width(
                 self.parent.eye_l_width_default, 
-                int(self.parent.eye_r_width_default * 0.95)
+                int(self.parent.eye_r_width_default * 0.90)
             )
             self.parent.shapes.set_height(
                 self.parent.eye_l_height_default, 

@@ -13,9 +13,9 @@ import time
 import math
 
 # Import utility modules
-from utils.animations_utils import AnimationsHandler
-from utils.moods_utils import MoodsHandler, DEFAULT, TIRED, ANGRY, EXCITED, SAD
-from utils.shapes_utils import ShapesHandler, N, NE, E, SE, S, SW, W, NW
+from anim_eyes.utils.animations_utils import AnimationsHandler
+from anim_eyes.utils.moods_utils import MoodsHandler, DEFAULT, TIRED, ANGRY, CUTE, SAD
+from anim_eyes.utils.shapes_utils import ShapesHandler, N, NE, E, SE, S, SW, W, NW
 
 # Colors
 BLACK = (0, 0, 0)
@@ -603,7 +603,7 @@ class RoboEyes:
         
     def anim_excited(self):
         """Excited animation - rapidly changing eye size"""
-        self.set_mood(EXCITED)
+        self.set_mood(CUTE)
         self.set_h_flicker(True, 3)
         self.set_v_flicker(True, 3)
         return True
