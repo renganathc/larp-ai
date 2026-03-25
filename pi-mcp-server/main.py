@@ -1,15 +1,17 @@
-from fastmcp import FastMCP
 from instances import mcp
+import threading
 
-import tools.movement
-import tools.head
-import tools.expression
-import tools.vision
+import tools.speech
+import tools.general
+#import tools.movement
 
-@mcp.tool()
-def turn_left():
-    """Turn the robot left"""
-    return {"status": "turning left"}
+def run_mcp():
+    mcp.run()
+
 
 if __name__ == "__main__":
-    mcp.run(host="0.0.0.0", port=8000, transport="sse")
+    
+    threading.Thread(target=run_mcp, daemon=True).start()
+    
+    from hardware.eye_disp_runner import run
+    run()
